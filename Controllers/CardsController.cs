@@ -5,7 +5,7 @@ using WebApplication1.Contracts;
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("controller")]
+    [Route("api/v1/cards")]
     public class CardsController : ControllerBase
     {
         private readonly ICardRepository _cardRepository;
@@ -15,7 +15,7 @@ namespace WebApplication1.Controllers
             _cardRepository = cardRepository;
         }
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<ActionResult<List<CardsResponse>>> iGetCards([FromQuery]string TgId)
         {
             var cards = await _cardRepository.GetCards(TgId);

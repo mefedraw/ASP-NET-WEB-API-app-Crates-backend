@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TgAppCrates.Core.models;
 using TgAppCrates.Core.Abstractions;
 using TgAppCrates.DataAccess;
+using TgAppCrates.DataAccess.repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<CardsDbContext>(
-    options =>
-    {
-        options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(CardsDbContext)));
-    });
+        options =>
+        {
+            options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(CardsDbContext)));
+        });
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+/*builder.Services.AddScoped<ICardRepository, CardRepository>();*/
 
 var app = builder.Build();
 
@@ -32,3 +35,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+/*
+1134784306
+*/

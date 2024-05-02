@@ -16,12 +16,19 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<CardsResponse>>> iGetCards([FromQuery]string TgId)
+        public async Task<ActionResult<List<GetAllCardsResponse>>> GetCards([FromQuery]string TgId)
         {
             var cards = await _cardRepository.GetCards(TgId);
 
-            var response = cards.Select(c => new CardsResponse(c.Id, c.TgId, c.Type, c.Count));
+            var response = cards.Select(c => new GetAllCardsResponse(c.Id, c.TgId, c.Type, c.Count));
             return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddCardToUser([FromQuery]string tgId,[FromQuery] short type)
+        {
+            await _cardRepository.AddCardToUser(tgId, type);
+            return Created();
         }
     }
 }

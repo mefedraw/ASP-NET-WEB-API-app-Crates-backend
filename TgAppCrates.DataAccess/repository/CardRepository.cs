@@ -13,20 +13,20 @@ public class CardRepository : ICardRepository
         _context = context;
     }
 
-    public async Task<List<Card>> GetCards(string tgId)
+    public  Task<List<Card>> GetCards(string tgId)
     {
         var userCards = _context.Cards.Where(u => u.TgId == tgId).ToList();
-        return userCards;
+        return Task.FromResult(userCards);
     }
     
-    public async  Task<Task> addCardToUser(string tgId, short type)
+    public async  Task AddCardToUser(string tgId, short type)
     {
         var userCards = _context.Cards.Where(u => u.TgId == tgId).ToList();
         if (userCards.Count == 0)
         {
             //var tempUser = new Card { Id = Guid.NewGuid(), TgId = tgId, Type = type, Count = 1 };
             var tempUser = new Card( Guid.NewGuid(),  tgId, type, 1 );
-            _context.Cards.AddAsync(tempUser);
+            await _context.Cards.AddAsync(tempUser);
             Console.WriteLine("No user at all, card were added!");
         }
         else
@@ -36,7 +36,7 @@ public class CardRepository : ICardRepository
             {
                 //var tempUser = new Card { Id = Guid.NewGuid(), TgId = tgId, Type = type, Count = 1 };
                 var tempUser = new Card( Guid.NewGuid(),  tgId, type, 1 );
-                _context.Cards.AddAsync(tempUser);
+                await _context.Cards.AddAsync(tempUser);
                 Console.WriteLine("user exists but not such type, type added!");
             }
             else
@@ -48,16 +48,14 @@ public class CardRepository : ICardRepository
         }
 
         await _context.SaveChangesAsync();
-        return Task.CompletedTask;
     }
 
-    public async Task<Task> update(Guid id, string tgId, short type, int count)
+    public async Task Update(Guid id, string tgId, short type, int count)
     {
         await _context.Cards.Where(c => c.Id == id).ExecuteUpdateAsync(s => s
             .SetProperty(b => b.TgId, b => tgId)
             .SetProperty(b => b.Type, b => type)
             .SetProperty(b => b.Count, b => count));
-        return Task.CompletedTask;
     }
     
 }

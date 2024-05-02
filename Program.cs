@@ -6,60 +6,29 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TgAppCrates.Core.models;
 using TgAppCrates.Core.Abstractions;
+using TgAppCrates.DataAccess;
 
-namespace MyApp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<CardsDbContext>(
+    options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(CardsDbContext)));
+    });
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
-            var services = CreateServices();
-
-            CardsDbContext context = services.GetRequiredService<CardsDbContext>();
-            //context.Database.Migrate();
-
-            Application app = services.GetRequiredService<Application>();
-        }
-
-        private static ServiceProvider CreateServices()
-        {
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
-
-            ICardRepository myCardRepository = null; // ???
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton<IConfiguration>(configuration)
-                .AddDbContext<CardsDbContext>()
-                .BuildServiceProvider();
-
-            return serviceProvider;
-        }
-    }
-
-    public class Application
-    {
-        /*private readonly ICardRepository _cardsRepository;
-
-        public Application(ICardRepository cardsRepository)
-        {
-            _cardsRepository = cardsRepository;
-        }
-
-        public async Task<List<Card>> GetAllCards(string tgId)
-        {
-            return await _cardsRepository.GetCards(tgId);
-        }
-
-        public async Task<Task> addCardToUser(string tgId, short type)
-        {
-            return _cardsRepository.addCardToUser(tgId, type);
-        }
-
-        public async Task<Task> update(Guid id, string tgId, short type, int count)
-        {
-            return _cardsRepository.update(id, tgId, type, count);
-        }*/
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

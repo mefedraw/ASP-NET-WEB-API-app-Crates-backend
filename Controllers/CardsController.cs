@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TgAppCrates.Core.Abstractions;
+using TgAppCrates.Core.models;
 using WebApplication1.Contracts;
 
 namespace WebApplication1.Controllers
@@ -16,18 +17,34 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<GetAllCardsResponse>>> GetCards([FromQuery]string TgId)
+        public async Task<ActionResult<List<GetAllCardsResponse>>> GetCards([FromQuery] string TgId)
         {
             var cards = await _cardRepository.GetCards(TgId);
+            Dictionary<int, Tuple<string, string>> tempUserCardDataDict = new Dictionary<int, Tuple<string, string>>();
+            foreach (var c in cards)
+            {
+                var tempCardData = _cardRepository.GetCardData(c.Type);
+                tempUserCardDataDict.Add(c.Type, Tuple.Create(tempCardData.CardName, tempCardData.Url));
+            }
 
-            var response = cards.Select(c => new GetAllCardsResponse(c.Id, c.TgId, c.Type, c.Count));
+            var response = cards.Select(c =>
+                new GetAllCardsResponse(c.Id, c.TgId, c.Type, c.Count, tempUserCardDataDict[c.Type].Item1,
+                    tempUserCardDataDict[c.Type].Item2));
             return Ok(response);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> AddCardToUser([FromQuery]string tgId,[FromQuery] short type)
+        [HttpPost("add-card-to-user")]
+        public async Task<ActionResult> AddCardToUser([FromQuery] string tgId, [FromQuery] short type)
         {
             await _cardRepository.AddCardToUser(tgId, type);
+            return Created();
+        }
+
+        [HttpPost("add-card-data")]
+        public async Task<ActionResult> AddCardData([FromQuery] short type,
+            [FromQuery] string cardName, [FromQuery] string url)
+        {
+            await _cardRepository.AddCardData(type, cardName, url);
             return Created();
         }
     }

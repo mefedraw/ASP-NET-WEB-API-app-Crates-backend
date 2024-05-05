@@ -13,6 +13,24 @@ public class CardRepository : ICardRepository
         _context = context;
     }
 
+    public async Task AddCardData(short type, string cardName, string url)
+    {
+        var cardsWithSuchType = _context.CardsData.Where(u => u.Type == type).ToList();
+        var cardsWithSuchCardName = _context.CardsData.Where(u => u.CardName == cardName).ToList();
+        if (cardsWithSuchType.Count == 0 && cardsWithSuchCardName.Count == 0)
+        {
+            var tempCard = new CardData( Guid.NewGuid(),  type, cardName,url );
+            await _context.CardsData.AddAsync(tempCard);
+            Console.WriteLine("No CardData at all, cardData were added!");
+        }
+        await _context.SaveChangesAsync();
+    }
+    public CardData GetCardData(short type)
+    {
+        var cardData = _context.CardsData.Where(c => c.Type == type).FirstOrDefault();
+        return cardData;
+    }
+
     public  Task<List<Card>> GetCards(string tgId)
     {
         var userCards = _context.Cards.Where(u => u.TgId == tgId).ToList();

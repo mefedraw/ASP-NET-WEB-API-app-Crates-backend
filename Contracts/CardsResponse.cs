@@ -4,5 +4,7 @@
         Guid Id,
         string Tg_id,
         short Type,
-        int Count);   
+        int Count,
+        string Name,
+        string Url);   
 }

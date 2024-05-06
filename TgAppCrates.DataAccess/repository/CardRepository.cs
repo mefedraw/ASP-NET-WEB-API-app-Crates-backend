@@ -19,31 +19,44 @@ public class CardRepository : ICardRepository
         var cardsWithSuchCardName = _context.CardsData.Where(u => u.CardName == cardName).ToList();
         if (cardsWithSuchType.Count == 0 && cardsWithSuchCardName.Count == 0)
         {
-            var tempCard = new CardData( Guid.NewGuid(),  type, cardName,url );
+            var tempCard = new CardData(Guid.NewGuid(), type, cardName, url);
             await _context.CardsData.AddAsync(tempCard);
             Console.WriteLine("No CardData at all, cardData were added!");
         }
+
         await _context.SaveChangesAsync();
     }
+
+    public async Task<CardData> GetRandomCardAsync(string tg_id)
+    {
+        Random rnd = new Random();
+        var tempMaxSize = _context.CardsData.Count();
+        short maxSize = (short)tempMaxSize;
+        int tempRandomCard = rnd.Next(1, maxSize + 1);
+        short randomCard = (short)tempRandomCard;
+        await AddCardToUserAsync(tg_id, randomCard);
+        return GetCardData(randomCard);
+    }
+
     public CardData GetCardData(short type)
     {
         var cardData = _context.CardsData.Where(c => c.Type == type).FirstOrDefault();
         return cardData;
     }
 
-    public  Task<List<Card>> GetCards(string tgId)
+    public Task<List<Card>> GetCards(string tgId)
     {
         var userCards = _context.Cards.Where(u => u.TgId == tgId).ToList();
         return Task.FromResult(userCards);
     }
-    
-    public async  Task AddCardToUser(string tgId, short type)
+
+    public async Task AddCardToUserAsync(string tgId, short type)
     {
         var userCards = _context.Cards.Where(u => u.TgId == tgId).ToList();
         if (userCards.Count == 0)
         {
             //var tempUser = new Card { Id = Guid.NewGuid(), TgId = tgId, Type = type, Count = 1 };
-            var tempUser = new Card( Guid.NewGuid(),  tgId, type, 1 );
+            var tempUser = new Card(Guid.NewGuid(), tgId, type, 1);
             await _context.Cards.AddAsync(tempUser);
             Console.WriteLine("No user at all, card were added!");
         }
@@ -53,7 +66,7 @@ public class CardRepository : ICardRepository
             if (card == null)
             {
                 //var tempUser = new Card { Id = Guid.NewGuid(), TgId = tgId, Type = type, Count = 1 };
-                var tempUser = new Card( Guid.NewGuid(),  tgId, type, 1 );
+                var tempUser = new Card(Guid.NewGuid(), tgId, type, 1);
                 await _context.Cards.AddAsync(tempUser);
                 Console.WriteLine("user exists but not such type, type added!");
             }
@@ -75,5 +88,4 @@ public class CardRepository : ICardRepository
             .SetProperty(b => b.Type, b => type)
             .SetProperty(b => b.Count, b => count));
     }
-    
 }

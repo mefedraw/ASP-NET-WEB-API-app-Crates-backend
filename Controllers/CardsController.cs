@@ -16,7 +16,7 @@ namespace WebApplication1.Controllers
             _cardRepository = cardRepository;
         }
 
-        [HttpGet()]
+        [HttpGet("all-user-cards")] 
         public async Task<ActionResult<List<GetAllCardsResponse>>> GetCards([FromQuery] string TgId)
         {
             var cards = await _cardRepository.GetCards(TgId);
@@ -36,7 +36,7 @@ namespace WebApplication1.Controllers
         [HttpPost("add-card-to-user")]
         public async Task<ActionResult> AddCardToUser([FromQuery] string tgId, [FromQuery] short type)
         {
-            await _cardRepository.AddCardToUser(tgId, type);
+            await _cardRepository.AddCardToUserAsync(tgId, type);
             return Created();
         }
 
@@ -46,6 +46,14 @@ namespace WebApplication1.Controllers
         {
             await _cardRepository.AddCardData(type, cardName, url);
             return Created();
+        }
+
+        [HttpGet("random-card")]
+        public async Task<ActionResult<GetRandomCardResponse>> GetRandomCard([FromQuery] string tg_id)
+        {
+            var cardData = await _cardRepository.GetRandomCardAsync(tg_id);
+            var response = new GetRandomCardResponse(cardData.Type, cardData.CardName, cardData.Url);
+            return Ok(response);
         }
     }
 }

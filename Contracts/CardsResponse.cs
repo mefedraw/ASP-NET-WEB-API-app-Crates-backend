@@ -6,5 +6,10 @@
         short Type,
         int Count,
         string Name,
-        string Url);   
+        string Url);
+    
+    public record GetRandomCardResponse(
+        short Type,
+        string Name,
+        string Url);
 }

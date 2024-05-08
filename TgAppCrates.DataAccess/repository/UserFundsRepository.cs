@@ -13,7 +13,7 @@ public class UserFundsRepository : IUserFundsRepository
         _context = context;
     }
 
-    private bool UserExists(string tgId)
+    public bool UserExists(string tgId)
     {
         return _context.UserFunds.Where(u => u.TgId == tgId).Count() > 0;
     }

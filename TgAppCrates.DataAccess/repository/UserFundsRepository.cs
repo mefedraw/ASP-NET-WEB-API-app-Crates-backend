@@ -13,10 +13,14 @@ public class UserFundsRepository : IUserFundsRepository
         _context = context;
     }
 
+    private bool UserExists(string tgId)
+    {
+        return _context.UserFunds.Where(u => u.TgId == tgId).Count() > 0;
+    }
+
     public async Task AddFundsToUser(string tgId, ulong fundsAmount)
     {
-        var userExists = _context.UserFunds.Where(u => u.TgId == tgId).Count();
-        if (userExists == 0)
+        if (UserExists(tgId))
         {
             var tempUser = new UserFunds(Guid.NewGuid(), tgId, fundsAmount);
             await _context.UserFunds.AddAsync(tempUser);
@@ -35,8 +39,7 @@ public class UserFundsRepository : IUserFundsRepository
 
     public async Task<bool> RemoveFundsFromUser(string tgId, ulong fundsAmount)
     {
-        var userExists = _context.UserFunds.Where(u => u.TgId == tgId).Count();
-        if (userExists > 0)
+        if (UserExists(tgId))
         {
             var user = _context.UserFunds.Where(u => u.TgId == tgId).SingleOrDefault();
             if (user.Funds >= fundsAmount)
@@ -50,5 +53,11 @@ public class UserFundsRepository : IUserFundsRepository
         }
 
         return false;
+    }
+
+    public ulong GetUserFunds(string tgId)
+    {
+        var user = _context.UserFunds.Where(u => u.TgId == tgId).SingleOrDefault();
+        return user.Funds;
     }
 }

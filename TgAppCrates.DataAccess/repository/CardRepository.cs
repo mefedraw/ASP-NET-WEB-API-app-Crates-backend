@@ -6,18 +6,18 @@ namespace TgAppCrates.DataAccess.repository;
 
 public class CardRepository : ICardRepository
 {
-    private readonly CardsDbContext _context;
+    private readonly DbContext _context;
 
-    public CardRepository(CardsDbContext context)
+    public CardRepository(DbContext context)
     {
         _context = context;
     }
 
     public async Task AddCardData(short type, string cardName, string url)
     {
-        var cardsWithSuchType = _context.CardsData.Where(u => u.Type == type).ToList();
-        var cardsWithSuchCardName = _context.CardsData.Where(u => u.CardName == cardName).ToList();
-        if (cardsWithSuchType.Count == 0 && cardsWithSuchCardName.Count == 0)
+        var cardsWithSuchType = _context.CardsData.Where(u => u.Type == type).Count();
+        var cardsWithSuchCardName = _context.CardsData.Where(u => u.CardName == cardName).Count();
+        if (cardsWithSuchType == 0 && cardsWithSuchCardName == 0)
         {
             var tempCard = new CardData(Guid.NewGuid(), type, cardName, url);
             await _context.CardsData.AddAsync(tempCard);

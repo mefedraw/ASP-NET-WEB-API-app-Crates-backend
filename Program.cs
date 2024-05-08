@@ -15,13 +15,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CardsDbContext>(
+builder.Services.AddDbContext<DbContext>(
         options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(CardsDbContext)));
+            options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(DbContext)));
         });
 builder.Services.AddScoped<ICardRepository, CardRepository>();
-/*builder.Services.AddScoped<ICardRepository, CardRepository>();*/
+builder.Services.AddScoped<IUserFundsRepository, UserFundsRepository>();
 
 var app = builder.Build();
 

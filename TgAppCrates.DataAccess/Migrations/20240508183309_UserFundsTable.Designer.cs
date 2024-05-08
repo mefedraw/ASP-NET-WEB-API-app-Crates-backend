@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace TgAppCrates.DataAccess.Migrations
 {
-    [DbContext(typeof(CardsDbContext))]
+    [DbContext(typeof(DbContext))]
     [Migration("20240508183309_UserFundsTable")]
     partial class UserFundsTable
     {

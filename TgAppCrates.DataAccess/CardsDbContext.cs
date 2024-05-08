@@ -7,6 +7,7 @@ public class CardsDbContext : DbContext
     }
     
     public DbSet<Card> Cards { get; set; }
-    
     public DbSet<CardData> CardsData { get; set; }
+    
+    public DbSet<UserFunds> UserFunds { get; set; }
 }

@@ -6,9 +6,9 @@ namespace TgAppCrates.DataAccess.repository;
 
 public class CardRepository : ICardRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
 
-    public CardRepository(DbContext context)
+    public CardRepository(AppDbContext context)
     {
         _context = context;
     }

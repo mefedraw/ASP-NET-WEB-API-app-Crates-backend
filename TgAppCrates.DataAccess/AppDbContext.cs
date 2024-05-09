@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TgAppCrates.Core.models;
-public class DbContext : Microsoft.EntityFrameworkCore.DbContext
+public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
-    public DbContext(DbContextOptions<DbContext> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
     

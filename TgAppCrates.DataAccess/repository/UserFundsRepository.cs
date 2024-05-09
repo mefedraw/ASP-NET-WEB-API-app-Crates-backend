@@ -3,24 +3,24 @@ using TgAppCrates.Core.models;
 using TgAppCrates.Core.Abstractions;
 
 namespace TgAppCrates.DataAccess.repository;
-
 public class UserFundsRepository : IUserFundsRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
 
-    public UserFundsRepository(DbContext context)
+    public UserFundsRepository(AppDbContext context)
     {
         _context = context;
     }
 
     public bool UserExists(string tgId)
     {
-        return _context.UserFunds.Where(u => u.TgId == tgId).Count() > 0;
+        return _context.UserFunds.Any(u => u.TgId == tgId);
     }
 
     public async Task AddFundsToUser(string tgId, ulong fundsAmount)
     {
-        if (UserExists(tgId))
+        var user = _context.UserFunds.SingleOrDefault(u => u.TgId == tgId);
+        if (user == null)
         {
             var tempUser = new UserFunds(Guid.NewGuid(), tgId, fundsAmount);
             await _context.UserFunds.AddAsync(tempUser);
@@ -28,10 +28,9 @@ public class UserFundsRepository : IUserFundsRepository
         }
         else
         {
-            var user = _context.UserFunds.Where(u => u.TgId == tgId).SingleOrDefault();
             user.Funds += fundsAmount;
             _context.Update(user);
-            Console.WriteLine("Funds were added" + "(" + fundsAmount + ")" + " from user " + tgId);
+            Console.WriteLine("Funds were added" + "(" + fundsAmount + ")" + " to user " + tgId);
         }
 
         await _context.SaveChangesAsync();
@@ -39,20 +38,14 @@ public class UserFundsRepository : IUserFundsRepository
 
     public async Task<bool> RemoveFundsFromUser(string tgId, ulong fundsAmount)
     {
-        if (UserExists(tgId))
-        {
-            var user = _context.UserFunds.Where(u => u.TgId == tgId).SingleOrDefault();
-            if (user.Funds >= fundsAmount)
-            {
-                user.Funds -= fundsAmount;
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Funds were removed" + "(" + fundsAmount + ")" + " from user " + tgId);
-                return true;
-            }
-        }
-
-        return false;
+        if (!UserExists(tgId)) return false;
+        var user = _context.UserFunds.SingleOrDefault(u => u.TgId == tgId);
+        if (user.Funds < fundsAmount) return false;
+        user.Funds -= fundsAmount;
+        _context.Update(user);
+        await _context.SaveChangesAsync();
+        Console.WriteLine("Funds were removed" + "(" + fundsAmount + ")" + " from user " + tgId);
+        return true;
     }
 
     public ulong GetUserFunds(string tgId)

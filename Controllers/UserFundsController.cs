@@ -19,7 +19,7 @@ public class UserFundsController : ControllerBase
     [HttpGet("user-funds")]
     public ActionResult<ulong> GetCards([FromQuery] string tgId)
     {
-        ulong funds = _userFundsRepository.GetUserFunds(tgId);
+        var funds = _userFundsRepository.GetUserFunds(tgId);
         var response = new UserFundsResponse(funds);
         return Ok(response);
     }

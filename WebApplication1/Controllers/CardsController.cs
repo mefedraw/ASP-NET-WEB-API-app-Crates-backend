@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TgAppCrates.Core.Abstractions;
-using TgAppCrates.Core.models;
 using WebApplication1.Contracts;
 
 namespace WebApplication1.Controllers

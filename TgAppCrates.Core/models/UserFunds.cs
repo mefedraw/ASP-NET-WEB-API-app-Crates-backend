@@ -1,6 +1,6 @@
 ﻿namespace TgAppCrates.Core.models;
 
-public class UserFunds
+public class UserFunds 
 {
     public UserFunds(Guid id, string tgId, ulong funds)
     {

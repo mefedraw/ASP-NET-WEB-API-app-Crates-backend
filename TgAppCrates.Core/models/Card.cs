@@ -1,6 +1,6 @@
 ﻿namespace TgAppCrates.Core.models;
 
-public class Card
+public class Card 
 {
     public Card(Guid id, string tgId, short type, int count)
     {

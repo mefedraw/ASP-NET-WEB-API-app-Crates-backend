@@ -1,13 +1,9 @@
-using System;
-using System.Dynamic;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using TgAppCrates.Core.models;
+using Microsoft.Extensions.Options;
 using TgAppCrates.Core.Abstractions;
 using TgAppCrates.DataAccess;
 using TgAppCrates.DataAccess.repository;
+using WebApplication1;
 
 var builder = WebApplication.CreateBuilder(args);
 

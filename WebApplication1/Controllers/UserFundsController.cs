@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 using TgAppCrates.Core.Abstractions;
-using TgAppCrates.Core.Abstractions;
 using WebApplication1.Contracts;
 
 [ApiController]
